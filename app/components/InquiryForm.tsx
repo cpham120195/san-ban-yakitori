@@ -33,7 +33,7 @@ export default function InquiryForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [contactErrors, setContactErrors] = useState<Record<string, string>>({});
 
-  function handleContactInvalid(event: FormEvent<HTMLInputElement>) {
+  function handleContactInvalid(event: FormEvent<HTMLInputElement | HTMLSelectElement>) {
     event.preventDefault();
     const input = event.currentTarget;
     const missingMessages: Record<string, string> = {
@@ -43,6 +43,7 @@ export default function InquiryForm() {
       eventDate: "Please select your event date",
       eventLocation: "Please fill out your location or city",
       guestCount: "Please fill out your estimated guest count",
+      eventType: "Please select your event type",
     };
     const message = input.name === "eventDate" && input.validity.badInput
       ? "Please enter a valid event date"
@@ -410,18 +411,24 @@ export default function InquiryForm() {
           <div className="min-w-0">
 
             <label htmlFor="eventType" className="mb-2 block text-[0.95rem] text-stone-300">
-              Event Type
+              Event Type <span className="text-xs text-stone-400">(required)</span>
             </label>
 
             <div className="relative">
 
               <select
                 id="eventType"
-              name="eventType"
+                name="eventType"
                 value={form.eventType}
-                onChange={updateField}
+                onInvalid={handleContactInvalid}
+                onChange={(event) => {
+                  setContactErrors((previous) => ({ ...previous, eventType: "" }));
+                  updateField(event);
+                }}
+                aria-invalid={Boolean(contactErrors.eventType)}
+                aria-describedby={contactErrors.eventType ? "eventType-error" : undefined}
                 required
-                className="w-full appearance-none rounded-lg border border-white/15 bg-black/70 px-4 py-3.5 pr-10 text-white outline-none transition hover:border-white/25 focus:border-white/55"
+                className={`w-full scroll-mt-24 appearance-none rounded-lg border bg-black/70 px-4 py-3.5 pr-10 text-base text-white outline-none transition ${contactErrors.eventType ? "border-red-400/70 focus:border-red-300" : "border-white/15 hover:border-white/25 focus:border-white/55"}`}
               >
                 <option value="">Select one</option>
                 <option>Birthday</option>
@@ -437,6 +444,11 @@ export default function InquiryForm() {
               </div>
 
             </div>
+            {contactErrors.eventType && (
+              <p id="eventType-error" role="alert" className="mt-2 text-sm leading-5 text-red-300">
+                {contactErrors.eventType}
+              </p>
+            )}
 
           </div>
 
