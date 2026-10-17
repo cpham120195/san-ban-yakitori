@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
+import { isValidPhoneNumber, phoneValidationMessage } from "../../lib/phone";
 
 export async function POST(req: Request) {
   try {
@@ -20,6 +21,13 @@ export async function POST(req: Request) {
     if (!name || !email || !phone || !eventDate || !eventLocation || !guestCount || !eventType) {
       return NextResponse.json(
         { error: "Please fill out all fields." },
+        { status: 400 }
+      );
+    }
+
+    if (!isValidPhoneNumber(phone)) {
+      return NextResponse.json(
+        { error: phoneValidationMessage },
         { status: 400 }
       );
     }

@@ -3,6 +3,7 @@
 import { FormEvent, useEffect, useState } from "react";
 import { Check, AlertCircle, ArrowRight } from "lucide-react";
 import { experiences, skewerOptions } from "../data/menu";
+import { phonePattern, phoneValidationMessage } from "../lib/phone";
 
 function getTodayString() {
   const today = new Date();
@@ -30,6 +31,34 @@ export default function InquiryForm() {
   });
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [contactErrors, setContactErrors] = useState<Record<string, string>>({});
+
+  function handleContactInvalid(event: FormEvent<HTMLInputElement>) {
+    event.preventDefault();
+    const input = event.currentTarget;
+    const missingMessages: Record<string, string> = {
+      name: "Please fill out your name",
+      email: "Please fill out your email",
+      phone: "Please fill out your phone number",
+      eventDate: "Please select your event date",
+      eventLocation: "Please fill out your location or city",
+      guestCount: "Please fill out your estimated guest count",
+    };
+    const message = input.name === "eventDate" && input.validity.badInput
+      ? "Please enter a valid event date"
+      : input.validity.valueMissing
+      ? missingMessages[input.name]
+      : input.name === "eventDate"
+        ? "Please select today or a future date"
+        : input.name === "phone"
+        ? phoneValidationMessage
+        : "Please enter a valid email address, like name@example.com";
+    setContactErrors((previous) => ({ ...previous, [input.name]: message }));
+    if (input.form?.querySelector(":invalid") === input) {
+      input.focus();
+    }
+  }
+
 
   const [status, setStatus] = useState<{
     type: "success" | "error" | null;
@@ -65,12 +94,13 @@ export default function InquiryForm() {
   ) {
     const { name, value } = e.target;
 
-    if (name === "eventDate" && value && value < getTodayString()) {
-      setStatus({
-        type: "error",
-        message: "Please select today or a future date.",
-      });
-      return;
+    if (name === "eventDate") {
+      setContactErrors((previous) => ({
+        ...previous,
+        eventDate: value && value < getTodayString()
+          ? "Please select today or a future date"
+          : "",
+      }));
     }
 
     setStatus({ type: null, message: "" });
@@ -89,10 +119,11 @@ export default function InquiryForm() {
     const today = getTodayString();
 
     if (form.eventDate && form.eventDate < today) {
-      setStatus({
-        type: "error",
-        message: "Please select today or a future date.",
-      });
+      setContactErrors((previous) => ({
+        ...previous,
+        eventDate: "Please select today or a future date",
+      }));
+      (e.currentTarget.elements.namedItem("eventDate") as HTMLInputElement)?.focus();
       setIsSubmitting(false);
       return;
     }
@@ -118,6 +149,7 @@ export default function InquiryForm() {
       });
 
       setForm(emptyForm);
+      setContactErrors({});
 
     } catch (error) {
       setStatus({
@@ -153,6 +185,7 @@ export default function InquiryForm() {
           onClick={() => {
             setStatus({ type: null, message: "" });
             setForm(emptyForm);
+      setContactErrors({});
           }}
           className="mt-7 inline-flex min-h-12 items-center justify-center rounded-full border border-white/35 px-7 py-3 text-sm font-semibold uppercase tracking-[0.12em] text-white transition hover:-translate-y-0.5 hover:bg-white hover:text-black"
         >
@@ -178,7 +211,7 @@ export default function InquiryForm() {
 
           <div className="min-w-0">
             <label htmlFor="name" className="mb-2 block text-[0.95rem] text-stone-300">
-              Name
+              Name <span className="text-xs text-stone-400">(required)</span>
             </label>
 
             <input
@@ -186,15 +219,26 @@ export default function InquiryForm() {
               name="name"
               autoComplete="name"
               value={form.name}
-              onChange={updateField}
+              onInvalid={handleContactInvalid}
+              onChange={(event) => {
+                setContactErrors((previous) => ({ ...previous, name: "" }));
+                updateField(event);
+              }}
+              aria-invalid={Boolean(contactErrors.name)}
+              aria-describedby={contactErrors.name ? "name-error" : undefined}
               required
-              className="w-full rounded-lg border border-white/15 bg-black/70 px-4 py-3.5 text-white outline-none transition hover:border-white/25 focus:border-white/55"
+              className={`w-full scroll-mt-24 rounded-lg border bg-black/70 px-4 py-3.5 text-base text-white outline-none transition ${contactErrors.name ? "border-red-400/70 focus:border-red-300" : "border-white/15 hover:border-white/25 focus:border-white/55"}`}
             />
+            {contactErrors.name && (
+              <p id="name-error" role="alert" className="mt-2 text-sm leading-5 text-red-300">
+                {contactErrors.name}
+              </p>
+            )}
           </div>
 
           <div className="min-w-0">
             <label htmlFor="email" className="mb-2 block text-[0.95rem] text-stone-300">
-              Email
+              Email <span className="text-xs text-stone-400">(required)</span>
             </label>
 
             <input
@@ -203,10 +247,21 @@ export default function InquiryForm() {
               autoComplete="email"
               type="email"
               value={form.email}
-              onChange={updateField}
+              onInvalid={handleContactInvalid}
+              onChange={(event) => {
+                setContactErrors((previous) => ({ ...previous, email: "" }));
+                updateField(event);
+              }}
+              aria-invalid={Boolean(contactErrors.email)}
+              aria-describedby={contactErrors.email ? "email-error" : undefined}
               required
-              className="w-full rounded-lg border border-white/15 bg-black/70 px-4 py-3.5 text-white outline-none transition hover:border-white/25 focus:border-white/55"
+              className={`w-full scroll-mt-24 rounded-lg border bg-black/70 px-4 py-3.5 text-base text-white outline-none transition ${contactErrors.email ? "border-red-400/70 focus:border-red-300" : "border-white/15 hover:border-white/25 focus:border-white/55"}`}
             />
+            {contactErrors.email && (
+              <p id="email-error" role="alert" className="mt-2 text-sm leading-5 text-red-300">
+                {contactErrors.email}
+              </p>
+            )}
           </div>
 
         </div>
@@ -217,39 +272,61 @@ export default function InquiryForm() {
 
           <div className="min-w-0">
             <label htmlFor="phone" className="mb-2 block text-[0.95rem] text-stone-300">
-              Phone
+              Phone <span className="text-xs text-stone-400">(required)</span>
             </label>
 
             <input
               id="phone"
               name="phone"
               type="tel"
+              inputMode="tel"
+              pattern={phonePattern}
+              placeholder="7145551234"
               autoComplete="tel"
               value={form.phone}
-              onChange={updateField}
+              onInvalid={handleContactInvalid}
+              onChange={(event) => {
+                setContactErrors((previous) => ({ ...previous, phone: "" }));
+                updateField(event);
+              }}
+              aria-invalid={Boolean(contactErrors.phone)}
+              aria-describedby={contactErrors.phone ? "phone-error" : undefined}
               required
-              className="w-full rounded-lg border border-white/15 bg-black/70 px-4 py-3.5 text-white outline-none transition hover:border-white/25 focus:border-white/55"
+              className={`w-full scroll-mt-24 rounded-lg border bg-black/70 px-4 py-3.5 text-base text-white outline-none transition ${contactErrors.phone ? "border-red-400/70 focus:border-red-300" : "border-white/15 hover:border-white/25 focus:border-white/55"}`}
             />
+            {contactErrors.phone && (
+              <p id="phone-error" role="alert" className="mt-2 text-sm leading-5 text-red-300">
+                {contactErrors.phone}
+              </p>
+            )}
           </div>
 
           <div className="min-w-0">
 
             <label htmlFor="eventDate" className="mb-2 block text-[0.95rem] text-stone-300">
-              Event Date
+              Event Date <span className="text-xs text-stone-400">(required)</span>
             </label>
 
-            <div className="relative w-full overflow-hidden rounded-lg border border-white/15 bg-black/70 transition hover:border-white/25 focus-within:border-white/55">
+            <div className={`relative w-full overflow-hidden rounded-lg border bg-black/70 transition ${contactErrors.eventDate ? "border-red-400/70 focus-within:border-red-300" : "border-white/15 hover:border-white/25 focus-within:border-white/55"}`}>
               <input
                 id="eventDate"
-              name="eventDate"
+                name="eventDate"
                 type="date"
                 min={getTodayString()}
                 value={form.eventDate}
+                onInvalid={handleContactInvalid}
                 onChange={updateField}
+                aria-invalid={Boolean(contactErrors.eventDate)}
+                aria-describedby={contactErrors.eventDate ? "eventDate-error" : undefined}
                 required
-                className="block h-[54px] w-full appearance-none bg-transparent px-4 py-3.5 text-white outline-none [color-scheme:dark]"
+                className="block h-[54px] w-full scroll-mt-24 appearance-none bg-transparent px-4 py-3.5 text-base text-white outline-none [color-scheme:dark]"
               />
             </div>
+            {contactErrors.eventDate && (
+              <p id="eventDate-error" role="alert" className="mt-2 text-sm leading-5 text-red-300">
+                {contactErrors.eventDate}
+              </p>
+            )}
 
           </div>
 
@@ -267,7 +344,7 @@ export default function InquiryForm() {
           <div className="min-w-0">
 
             <label htmlFor="eventLocation" className="mb-2 block text-[0.95rem] text-stone-300">
-              Location / City
+              Location / City <span className="text-xs text-stone-400">(required)</span>
             </label>
 
             <input
@@ -276,17 +353,28 @@ export default function InquiryForm() {
               type="text"
               placeholder="e.g. Irvine, CA"
               value={form.eventLocation}
-              onChange={updateField}
+              onInvalid={handleContactInvalid}
+              onChange={(event) => {
+                setContactErrors((previous) => ({ ...previous, eventLocation: "" }));
+                updateField(event);
+              }}
+              aria-invalid={Boolean(contactErrors.eventLocation)}
+              aria-describedby={contactErrors.eventLocation ? "eventLocation-error" : undefined}
               required
-              className="w-full rounded-lg border border-white/15 bg-black/70 px-4 py-3.5 text-white outline-none transition hover:border-white/25 focus:border-white/55"
+              className={`w-full scroll-mt-24 rounded-lg border bg-black/70 px-4 py-3.5 text-base text-white outline-none transition ${contactErrors.eventLocation ? "border-red-400/70 focus:border-red-300" : "border-white/15 hover:border-white/25 focus:border-white/55"}`}
             />
+            {contactErrors.eventLocation && (
+              <p id="eventLocation-error" role="alert" className="mt-2 text-sm leading-5 text-red-300">
+                {contactErrors.eventLocation}
+              </p>
+            )}
 
           </div>
 
           <div className="min-w-0">
 
             <label htmlFor="guestCount" className="mb-2 block text-[0.95rem] text-stone-300">
-              Estimated Guest Count
+              Estimated Guest Count <span className="text-xs text-stone-400">(required)</span>
             </label>
 
             <input
@@ -295,10 +383,21 @@ export default function InquiryForm() {
               type="text"
               placeholder="e.g. 30–40 guests"
               value={form.guestCount}
-              onChange={updateField}
+              onInvalid={handleContactInvalid}
+              onChange={(event) => {
+                setContactErrors((previous) => ({ ...previous, guestCount: "" }));
+                updateField(event);
+              }}
+              aria-invalid={Boolean(contactErrors.guestCount)}
+              aria-describedby={contactErrors.guestCount ? "guestCount-error" : undefined}
               required
-              className="w-full rounded-lg border border-white/15 bg-black/70 px-4 py-3.5 text-white outline-none transition hover:border-white/25 focus:border-white/55"
+              className={`w-full scroll-mt-24 rounded-lg border bg-black/70 px-4 py-3.5 text-base text-white outline-none transition ${contactErrors.guestCount ? "border-red-400/70 focus:border-red-300" : "border-white/15 hover:border-white/25 focus:border-white/55"}`}
             />
+            {contactErrors.guestCount && (
+              <p id="guestCount-error" role="alert" className="mt-2 text-sm leading-5 text-red-300">
+                {contactErrors.guestCount}
+              </p>
+            )}
 
           </div>
 
