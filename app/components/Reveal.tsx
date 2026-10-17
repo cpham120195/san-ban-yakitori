@@ -37,8 +37,8 @@ export default function Reveal({ children, className = "", delay = 0 }: RevealPr
         }
       },
       {
-        rootMargin: "0px 0px -12% 0px",
-        threshold: 0.12,
+        rootMargin: "0px 0px 80px 0px",
+        threshold: 0.01,
       }
     );
 

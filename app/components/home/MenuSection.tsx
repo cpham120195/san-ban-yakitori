@@ -6,19 +6,22 @@ import Reveal from "../Reveal";
 
 type MenuCardProps = {
   item: MenuItem;
+  classic: boolean;
 };
 
-function MenuCard({ item }: MenuCardProps) {
+function MenuCard({ item, classic }: MenuCardProps) {
   return (
     <div className="group flex h-full w-full flex-col overflow-hidden rounded-lg border border-white/10 bg-white/[0.035] transition duration-300 hover:-translate-y-1 hover:border-white/25 hover:bg-white/[0.06]">
-      <div className="relative aspect-[4/3] overflow-hidden bg-black sm:aspect-[16/11]">
+      <div className="relative aspect-[4/3] overflow-hidden bg-black sm:aspect-[16/11] lg:aspect-auto lg:h-[220px]">
         {item.image ? (
           <Image
             src={item.image}
             alt={item.name}
             fill
             className="object-cover transition duration-500 group-hover:scale-105"
-            sizes="(min-width: 1024px) 25vw, (min-width: 768px) 50vw, 50vw"
+            sizes={classic
+              ? "(min-width: 1152px) 357px, (min-width: 1024px) 33vw, 50vw"
+              : "(min-width: 1152px) 264px, (min-width: 1024px) 25vw, 50vw"}
           />
         ) : (
           <div className="flex h-full items-center justify-center text-sm text-stone-500">
@@ -41,12 +44,16 @@ function MenuCard({ item }: MenuCardProps) {
   );
 }
 
-function MenuGrid({ items }: { items: MenuItem[] }) {
+function MenuGrid({ items, classic = false }: { items: MenuItem[]; classic?: boolean }) {
   return (
-    <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
+    <div className={`grid grid-cols-4 gap-3 sm:gap-4 ${classic ? "lg:grid-cols-6" : "lg:grid-cols-8"}`}>
       {items.map((item, index) => (
-        <Reveal key={item.name} delay={index * 45} className="h-full">
-          <MenuCard item={item} />
+        <Reveal
+          key={item.name}
+          delay={index * 45}
+          className="col-span-2 h-full"
+        >
+          <MenuCard item={item} classic={classic} />
         </Reveal>
       ))}
     </div>
@@ -65,7 +72,7 @@ export default function MenuSection() {
           <div className="mx-auto mt-4 h-px w-16 bg-white/25" />
         </Reveal>
 
-        <div className="space-y-12">
+        <div className="space-y-12 lg:space-y-16">
           <Reveal>
             <div className="mb-4 border-b border-white/10 pb-3">
               <h3 className="text-lg font-semibold text-white">
@@ -75,7 +82,7 @@ export default function MenuSection() {
                 Our signature yakitori offerings available across every experience.
               </p>
             </div>
-            <MenuGrid items={menuA} />
+            <MenuGrid items={menuA} classic />
           </Reveal>
 
           <Reveal>

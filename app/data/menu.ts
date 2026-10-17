@@ -42,11 +42,11 @@ export const experiences: ExperienceItem[] = [
     approximateMix: "80% Classic Yakitori • 20% Premium Yakitori",
     includes: ["Mostly classic yakitori", "A touch of premium selections"],
     prices: {
-      200: "$1,200",
-      300: "$1,700",
-      500: "$2,300",
-      700: "$2,900",
-      1000: "$3,900",
+      200: "$1,500",
+      300: "$2,000",
+      500: "$2,600",
+      700: "$3,200",
+      1000: "$4,200",
     },
   },
   {
@@ -59,11 +59,11 @@ export const experiences: ExperienceItem[] = [
     includes: ["Balanced premium selection", "Best overall value"],
     mostPopular: true,
     prices: {
-      200: "$1,400",
-      300: "$1,900",
-      500: "$2,600",
-      700: "$3,300",
-      1000: "$4,400",
+      200: "$1,700",
+      300: "$2,200",
+      500: "$2,900",
+      700: "$3,600",
+      1000: "$4,700",
     },
   },
   {
@@ -77,11 +77,11 @@ export const experiences: ExperienceItem[] = [
       "Ideal for upscale celebrations",
     ],
     prices: {
-      200: "$1,600",
-      300: "$2,200",
-      500: "$3,000",
-      700: "$3,800",
-      1000: "$5,000",
+      200: "$1,900",
+      300: "$2,500",
+      500: "$3,300",
+      700: "$4,100",
+      1000: "$5,300",
     },
   },
 ];
@@ -116,6 +116,13 @@ export const menuA: MenuItem[] = [
     clickable: true,
     description: "Tender chicken gizzard grilled over binchotan.",
     image: "/chicken-gizzard-updated.jpg",
+  },
+  {
+    name: "Chicken Wing",
+    subtitle: "Whole Chicken Wing",
+    clickable: true,
+    description: "Juicy chicken wing grilled over binchotan.",
+    image: "/chicken-wing-updated.jpg",
   },
   {
     name: "Mushroom",
@@ -161,13 +168,6 @@ export const menuB: MenuItem[] = [
     clickable: true,
     description: "Tender pork belly grilled over binchotan.",
     image: "/pork-belly-updated.jpg",
-  },
-  {
-    name: "Chicken Wing",
-    subtitle: "Whole Chicken Wing",
-    clickable: true,
-    description: "Juicy chicken wing grilled over binchotan.",
-    image: "/chicken-wing-updated.jpg",
   },
   {
     name: "Chicken Skin",

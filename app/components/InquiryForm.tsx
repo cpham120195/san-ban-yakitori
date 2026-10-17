@@ -177,12 +177,14 @@ export default function InquiryForm() {
         <div className="grid gap-5 sm:grid-cols-2">
 
           <div className="min-w-0">
-            <label className="mb-2 block text-[0.95rem] text-stone-300">
+            <label htmlFor="name" className="mb-2 block text-[0.95rem] text-stone-300">
               Name
             </label>
 
             <input
+              id="name"
               name="name"
+              autoComplete="name"
               value={form.name}
               onChange={updateField}
               required
@@ -191,12 +193,14 @@ export default function InquiryForm() {
           </div>
 
           <div className="min-w-0">
-            <label className="mb-2 block text-[0.95rem] text-stone-300">
+            <label htmlFor="email" className="mb-2 block text-[0.95rem] text-stone-300">
               Email
             </label>
 
             <input
+              id="email"
               name="email"
+              autoComplete="email"
               type="email"
               value={form.email}
               onChange={updateField}
@@ -212,12 +216,15 @@ export default function InquiryForm() {
         <div className="grid gap-5 sm:grid-cols-2">
 
           <div className="min-w-0">
-            <label className="mb-2 block text-[0.95rem] text-stone-300">
+            <label htmlFor="phone" className="mb-2 block text-[0.95rem] text-stone-300">
               Phone
             </label>
 
             <input
+              id="phone"
               name="phone"
+              type="tel"
+              autoComplete="tel"
               value={form.phone}
               onChange={updateField}
               required
@@ -227,13 +234,14 @@ export default function InquiryForm() {
 
           <div className="min-w-0">
 
-            <label className="mb-2 block text-[0.95rem] text-stone-300">
+            <label htmlFor="eventDate" className="mb-2 block text-[0.95rem] text-stone-300">
               Event Date
             </label>
 
             <div className="relative w-full overflow-hidden rounded-lg border border-white/15 bg-black/70 transition hover:border-white/25 focus-within:border-white/55">
               <input
-                name="eventDate"
+                id="eventDate"
+              name="eventDate"
                 type="date"
                 min={getTodayString()}
                 value={form.eventDate}
@@ -258,11 +266,12 @@ export default function InquiryForm() {
 
           <div className="min-w-0">
 
-            <label className="mb-2 block text-[0.95rem] text-stone-300">
+            <label htmlFor="eventLocation" className="mb-2 block text-[0.95rem] text-stone-300">
               Location / City
             </label>
 
             <input
+              id="eventLocation"
               name="eventLocation"
               type="text"
               placeholder="e.g. Irvine, CA"
@@ -276,11 +285,12 @@ export default function InquiryForm() {
 
           <div className="min-w-0">
 
-            <label className="mb-2 block text-[0.95rem] text-stone-300">
+            <label htmlFor="guestCount" className="mb-2 block text-[0.95rem] text-stone-300">
               Estimated Guest Count
             </label>
 
             <input
+              id="guestCount"
               name="guestCount"
               type="text"
               placeholder="e.g. 30–40 guests"
@@ -300,14 +310,15 @@ export default function InquiryForm() {
 
           <div className="min-w-0">
 
-            <label className="mb-2 block text-[0.95rem] text-stone-300">
+            <label htmlFor="eventType" className="mb-2 block text-[0.95rem] text-stone-300">
               Event Type
             </label>
 
             <div className="relative">
 
               <select
-                name="eventType"
+                id="eventType"
+              name="eventType"
                 value={form.eventType}
                 onChange={updateField}
                 required
@@ -332,14 +343,15 @@ export default function InquiryForm() {
 
           <div className="min-w-0">
 
-            <label className="mb-2 block text-[0.95rem] text-stone-300">
+            <label htmlFor="preferredPackage" className="mb-2 block text-[0.95rem] text-stone-300">
               Preferred Experience
             </label>
 
             <div className="relative">
 
               <select
-                name="preferredPackage"
+                id="preferredPackage"
+              name="preferredPackage"
                 value={form.preferredPackage}
                 onChange={updateField}
                 className="w-full appearance-none rounded-lg border border-white/15 bg-black/70 px-4 py-3.5 pr-10 text-white outline-none transition hover:border-white/25 focus:border-white/55"
@@ -372,12 +384,13 @@ export default function InquiryForm() {
       {/* MESSAGE */}
       <div className="border-t border-white/10 pt-5 sm:border-t-0 sm:pt-0">
 
-        <label className="mb-2 block text-[0.95rem] text-stone-300">
-          Tell us about your event
+        <label htmlFor="message" className="mb-2 block text-[0.95rem] text-stone-300">
+              Tell us about your event
         </label>
 
         <textarea
-          name="message"
+          id="message"
+              name="message"
           rows={5}
           value={form.message}
           onChange={updateField}

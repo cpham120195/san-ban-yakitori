@@ -1,7 +1,7 @@
+import AnimationBootstrap from "./components/AnimationBootstrap";
 import type { Metadata } from "next";
 import "./globals.css";
 import { Analytics } from "@vercel/analytics/react";
-import AnimationBootstrap from "./components/AnimationBootstrap";
 
 const siteUrl = "https://sanbanyakitori.com";
 const siteName = "San Ban Yakitori";
@@ -162,7 +162,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){var root=document.documentElement;root.classList.add("animations-ready");var fallback=window.setTimeout(function(){root.classList.remove("animations-ready")},5000);window.addEventListener("animations-initialized",function(){window.clearTimeout(fallback)},{once:true})})();`,
+          }}
+        />
+      </head>
       <body className="bg-[#0c0a09] text-white antialiased">
         <script
           type="application/ld+json"

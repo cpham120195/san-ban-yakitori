@@ -57,8 +57,8 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 
 .reveal {
   opacity: 1;
-  filter: blur(1px);
-  transform: translateY(18px);
+  filter: none;
+  transform: none;
   transition:
     opacity 700ms ease,
     filter 700ms ease,
@@ -68,6 +68,8 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 
 .animations-ready .reveal:not(.reveal-visible) {
   opacity: 0;
+  filter: blur(1px);
+  transform: translateY(18px);
 }
 
 .reveal-visible {
@@ -139,6 +141,17 @@ input[type="date"]::-webkit-calendar-picker-indicator {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *, *::before, *::after {
+    transition-duration: 0s !important;
+  }
+
+  .animations-ready .reveal:not(.reveal-visible),
+  .animations-ready .hero-reveal,
+  .animations-ready .hero-reveal-delay,
   .reveal,
   .hero-reveal,
   .status-card {
@@ -150,6 +163,7 @@ input[type="date"]::-webkit-calendar-picker-indicator {
   }
 
   .gallery-marquee {
-    animation-duration: 52s;
+    animation: none;
+    -webkit-animation: none;
   }
 }

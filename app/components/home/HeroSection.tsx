@@ -9,7 +9,7 @@ export default function HeroSection() {
         fill
         className="object-cover object-[48%_center] saturate-[1.18] contrast-[1.08] brightness-[1.08] sm:object-[50%_center]"
         sizes="100vw"
-        quality={92}
+        quality={75}
         priority
       />
 

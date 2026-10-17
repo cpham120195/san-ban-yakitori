@@ -69,7 +69,7 @@ export default function AboutSection() {
       }
 
       const lastFrameTime = lastFrameTimeRef.current ?? timestamp;
-      const elapsed = timestamp - lastFrameTime;
+      const elapsed = Math.min(timestamp - lastFrameTime, 64);
       lastFrameTimeRef.current = timestamp;
 
       if (!isGalleryPausedRef.current) {

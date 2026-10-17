@@ -1,8 +1,6 @@
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-
 export async function POST(req: Request) {
   try {
     const body = await req.json();
@@ -26,7 +24,15 @@ export async function POST(req: Request) {
       );
     }
 
-    await resend.emails.send({
+    if (!process.env.RESEND_API_KEY) {
+      return NextResponse.json(
+        { error: "Inquiries are temporarily unavailable. Please contact us by email or text." },
+        { status: 503 }
+      );
+    }
+
+    const resend = new Resend(process.env.RESEND_API_KEY);
+    const { error } = await resend.emails.send({
       from: "San Ban Yakitori <onboarding@resend.dev>",
       to: process.env.BOOKING_TO_EMAIL || "bookings@sanbanyakitori.com",
       subject: `New San Ban Yakitori Inquiry from ${name}`,
@@ -47,6 +53,14 @@ Message:
 ${message || "No additional details provided."}
       `,
     });
+
+    if (error) {
+      console.error("Inquiry email rejected:", error);
+      return NextResponse.json(
+        { error: "Your inquiry could not be sent. Please try again or contact us by email or text." },
+        { status: 502 }
+      );
+    }
 
     return NextResponse.json({ success: true });
   } catch (error) {
